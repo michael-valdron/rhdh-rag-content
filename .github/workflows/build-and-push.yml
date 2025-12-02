@@ -57,9 +57,10 @@ jobs:
           sudo apt install -y buildah
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Build image with Buildah
+      - name: Build CPU image with Buildah
         id: build_image
         uses: redhat-actions/buildah-build@v2
+        if: ${{ inputs.compute_flavor == 'cpu' }}
         with:
           image: ${{ env.IMAGE_NAME }}
           tags: |
@@ -70,7 +71,20 @@ jobs:
           oci: true
           build-args: |
             RHDH_DOCS_VERSION=${{ inputs.version }}
-            FLAVOR=${{ inputs.compute_flavor }}
+      - name: Build GPU image with Buildah
+        id: build_image
+        uses: redhat-actions/buildah-build@v2
+        if: ${{ inputs.compute_flavor == 'gpu' }}
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: |
+            ${{ env.LATEST_TAG }}-${{ matrix.arch }}
+          containerfiles: |
+            ${{ env.CONTAINER_FILE }}_gpu
+          archs: ${{ matrix.arch }}
+          oci: true
+          build-args: |
+            RHDH_DOCS_VERSION=${{ inputs.version }}
       - name: Check images
         run: |
           buildah images | grep '${{ env.IMAGE_NAME }}'
