@@ -17,7 +17,7 @@
 # Default to CPU if not specified
 FLAVOR ?= cpu
 TAG ?= latest
-RHDH_DOCS_VERSION ?= 1.9
+RHDH_DOCS_VERSION ?= 1.10.0
 NUM_WORKERS ?= $$(( $(shell nproc --all) / 2))
 PLATFORM ?= linux/amd64
 IMAGE_NAME ?= rhdh-rag-content
